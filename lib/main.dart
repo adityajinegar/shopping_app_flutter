@@ -15,7 +15,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'My Shop',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.teal)
+            .copyWith(secondary: Colors.tealAccent),
+        fontFamily: 'Lato',
       ),
       home: ProductsOverviewPage(),
     );
