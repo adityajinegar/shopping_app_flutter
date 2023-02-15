@@ -29,7 +29,10 @@ class BadgeIcon extends StatelessWidget {
             child: Text(
               value,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 10),
+              style: const TextStyle(
+                fontSize: 10,
+                color: Colors.black,
+              ),
             ),
           ),
         ),
