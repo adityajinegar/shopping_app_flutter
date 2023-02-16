@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopping_app_flutter/pages/edit_product_page.dart';
 import 'package:shopping_app_flutter/widgets/app_drawer.dart';
 
 import '../providers/products_provider.dart';
@@ -18,7 +19,9 @@ class UserProductPage extends StatelessWidget {
         title: const Text('Your Products'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(EditProductPage.routeName);
+            },
             icon: const Icon(Icons.add),
           ),
         ],
