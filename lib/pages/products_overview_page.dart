@@ -26,7 +26,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text("Aditya's Shop")),
+        title: const Text("Aditya's Shop"),
         actions: [
           PopupMenuButton(
             icon: const Icon(Icons.more_vert),

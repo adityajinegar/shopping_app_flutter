@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_app_flutter/pages/cart_page.dart';
+import 'package:shopping_app_flutter/providers/orders.dart';
 
 import 'pages/product_detail_page.dart';
 import 'pages/products_overview_page.dart';
@@ -22,9 +23,8 @@ class MyApp extends StatelessWidget {
           //If using the provider for the first time, use the create syntax, if reusing it then use the .value syntax
           create: (context) => ProductsProvider(),
         ),
-        ChangeNotifierProvider(
-          create: (context) => CartProvider(),
-        ),
+        ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider(create: (context) => Orders()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
