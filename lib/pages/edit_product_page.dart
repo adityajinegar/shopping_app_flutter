@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shopping_app_flutter/providers/products_provider.dart';
+
 import '../providers/product.dart';
+import '../providers/products_provider.dart';
 
 class EditProductPage extends StatefulWidget {
   const EditProductPage({super.key});
@@ -18,6 +19,13 @@ class _EditProductPageState extends State<EditProductPage> {
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
+  var _isInit = true;
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': '',
+  };
   var _editedProduct = Product(
     id: '',
     title: '',
@@ -29,7 +37,32 @@ class _EditProductPageState extends State<EditProductPage> {
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
+
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productId = ModalRoute.of(context)!.settings.arguments as String;
+
+      if (productId != null) {
+        _editedProduct = Provider.of<ProductsProvider>(context, listen: false)
+            .findById(
+                productId); //listen: false, because we want to fetch the Id only once and don't want to set an ongoing listener.
+        _initValues = {
+          'title': _editedProduct.title,
+          'description': _editedProduct.description,
+          'price': _editedProduct.price.toString(),
+          // 'imageUrl': _editedProduct.imageUrl,
+          'imageUrl': '',
+        };
+        _imageUrlController.text = _editedProduct.imageUrl;
+      }
+    }
+
+    _isInit = false; // because we want to run this only once at the beginning
+    super.didChangeDependencies();
   }
 
   void _updateImageUrl() {
@@ -52,8 +85,14 @@ class _EditProductPageState extends State<EditProductPage> {
       return;
     }
     _form.currentState!.save();
-    Provider.of<ProductsProvider>(context, listen: false)
-        .addProduct(_editedProduct);
+    if (_editedProduct.id != null) {
+      Provider.of<ProductsProvider>(context, listen: false)
+          .updateProduct(_editedProduct.id, _editedProduct);
+    } else {
+      Provider.of<ProductsProvider>(context, listen: false)
+          .addProduct(_editedProduct);
+    }
+
     Navigator.of(context).pop();
   }
 
@@ -87,6 +126,7 @@ class _EditProductPageState extends State<EditProductPage> {
           child: ListView(
             children: [
               TextFormField(
+                initialValue: _initValues['title'],
                 decoration: const InputDecoration(labelText: 'Title'),
                 textInputAction: TextInputAction.next,
                 validator: (value) {
@@ -100,7 +140,8 @@ class _EditProductPageState extends State<EditProductPage> {
                 },
                 onSaved: (newValue) {
                   _editedProduct = Product(
-                    id: '',
+                    id: _editedProduct.id,
+                    isFavorite: _editedProduct.isFavorite,
                     title: newValue!,
                     description: _editedProduct.description,
                     price: _editedProduct.price,
@@ -109,6 +150,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 },
               ),
               TextFormField(
+                initialValue: _initValues['price'],
                 decoration: const InputDecoration(labelText: 'Price'),
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.number,
@@ -130,7 +172,8 @@ class _EditProductPageState extends State<EditProductPage> {
                 },
                 onSaved: (newValue) {
                   _editedProduct = Product(
-                    id: '',
+                    id: _editedProduct.id,
+                    isFavorite: _editedProduct.isFavorite,
                     title: _editedProduct.title,
                     description: _editedProduct.description,
                     price: double.parse(newValue!),
@@ -139,6 +182,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 },
               ),
               TextFormField(
+                initialValue: _initValues['description'],
                 decoration: const InputDecoration(labelText: 'Description'),
                 focusNode: _descriptionFocusNode,
                 maxLines: 3,
@@ -154,7 +198,8 @@ class _EditProductPageState extends State<EditProductPage> {
                 },
                 onSaved: (newValue) {
                   _editedProduct = Product(
-                    id: '',
+                    id: _editedProduct.id,
+                    isFavorite: _editedProduct.isFavorite,
                     title: _editedProduct.title,
                     description: newValue!,
                     price: _editedProduct.price,
@@ -204,7 +249,8 @@ class _EditProductPageState extends State<EditProductPage> {
                       },
                       onSaved: (newValue) {
                         _editedProduct = Product(
-                          id: '',
+                          id: _editedProduct.id,
+                          isFavorite: _editedProduct.isFavorite,
                           title: _editedProduct.title,
                           description: _editedProduct.description,
                           price: _editedProduct.price,
