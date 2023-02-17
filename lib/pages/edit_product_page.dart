@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shopping_app_flutter/providers/products_provider.dart';
 import '../providers/product.dart';
 
 class EditProductPage extends StatefulWidget {
@@ -50,6 +52,9 @@ class _EditProductPageState extends State<EditProductPage> {
       return;
     }
     _form.currentState!.save();
+    Provider.of<ProductsProvider>(context, listen: false)
+        .addProduct(_editedProduct);
+    Navigator.of(context).pop();
   }
 
   // To avoid memory leaks
