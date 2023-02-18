@@ -78,51 +78,25 @@ class ProductsProvider with ChangeNotifier {
       FirebaseFirestore.instance.collection('products');
 
   Future<void> addProduct(Product product) async {
-    await productsCollection.doc().set({
+    return await productsCollection.doc().set({
       'title': product.title,
       'description': product.description,
       'imageUrl': product.imageUrl,
       'price': product.price,
       'isFavorite': product.isFavorite,
-    }).then((response) {
-      final newProduct = Product(
-        id: uuid.v4(),
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        imageUrl: product.imageUrl,
-      );
-      _items.add(newProduct);
-      notifyListeners();
-    });
-
-    // const url =
-    //     'https://shopping-app-flutter-7062d-default-rtdb.firebaseio.com/products.json';
-    // try {
-    //   final response = await http.post(
-    //     Uri.parse(url),
-    //     body: json.encode({
-    //       'title': product.title,
-    //       'description': product.description,
-    //       'imageUrl': product.imageUrl,
-    //       'price': product.price,
-    //       'isFavorite': product.isFavorite,
-    //     }),
-    //   );
-    //   final newProduct = Product(
-    //     title: product.title,
-    //     description: product.description,
-    //     price: product.price,
-    //     imageUrl: product.imageUrl,
-    //     id: json.decode(response.body)['name'],
-    //   );
-    //   _items.add(newProduct);
-    //   // _items.insert(0, newProduct); // at the start of the list
-    //   notifyListeners();
-    // } catch (error) {
-    //   print(error);
-    //   throw error;
-    // }
+    }).then(
+      (response) {
+        final newProduct = Product(
+          id: uuid.v4(),
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl,
+        );
+        _items.add(newProduct);
+        notifyListeners();
+      },
+    );
   }
 
   void updateProduct(String id, Product newProduct) {
