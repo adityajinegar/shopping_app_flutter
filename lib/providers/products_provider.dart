@@ -1,9 +1,16 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 import 'product.dart';
 
 class ProductsProvider with ChangeNotifier {
-  final List<Product> _items = [
+  // DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
+
+  List<Product> _items = [
     Product(
       id: 'p1',
       title: 'Red Shirt',
@@ -65,16 +72,57 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void addProduct(Product product) {
-    final newProduct = Product(
-      id: DateTime.now().toString(),
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
-    );
-    _items.insert(0, newProduct); // to add a new product at the beginning
-    notifyListeners();
+  var uuid = Uuid();
+
+  final CollectionReference productsCollection =
+      FirebaseFirestore.instance.collection('products');
+
+  Future<void> addProduct(Product product) async {
+    await productsCollection.doc().set({
+      'title': product.title,
+      'description': product.description,
+      'imageUrl': product.imageUrl,
+      'price': product.price,
+      'isFavorite': product.isFavorite,
+    }).then((response) {
+      final newProduct = Product(
+        id: uuid.v4(),
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      );
+      _items.add(newProduct);
+      notifyListeners();
+    });
+
+    // const url =
+    //     'https://shopping-app-flutter-7062d-default-rtdb.firebaseio.com/products.json';
+    // try {
+    //   final response = await http.post(
+    //     Uri.parse(url),
+    //     body: json.encode({
+    //       'title': product.title,
+    //       'description': product.description,
+    //       'imageUrl': product.imageUrl,
+    //       'price': product.price,
+    //       'isFavorite': product.isFavorite,
+    //     }),
+    //   );
+    //   final newProduct = Product(
+    //     title: product.title,
+    //     description: product.description,
+    //     price: product.price,
+    //     imageUrl: product.imageUrl,
+    //     id: json.decode(response.body)['name'],
+    //   );
+    //   _items.add(newProduct);
+    //   // _items.insert(0, newProduct); // at the start of the list
+    //   notifyListeners();
+    // } catch (error) {
+    //   print(error);
+    //   throw error;
+    // }
   }
 
   void updateProduct(String id, Product newProduct) {

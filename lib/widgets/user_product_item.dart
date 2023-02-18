@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shopping_app_flutter/providers/products_provider.dart';
 
 import '../pages/edit_product_page.dart';
+import '../providers/products_provider.dart';
 
 class UserProductItem extends StatelessWidget {
   const UserProductItem({

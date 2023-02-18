@@ -1,17 +1,20 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shopping_app_flutter/pages/cart_page.dart';
-import 'package:shopping_app_flutter/pages/edit_product_page.dart';
-import 'package:shopping_app_flutter/pages/orders_page.dart';
-import 'package:shopping_app_flutter/pages/user_product_page.dart';
-import 'package:shopping_app_flutter/providers/orders.dart';
+import 'pages/cart_page.dart';
+import 'pages/edit_product_page.dart';
+import 'pages/orders_page.dart';
+import 'pages/user_product_page.dart';
+import 'providers/orders.dart';
 
 import 'pages/product_detail_page.dart';
 import 'pages/products_overview_page.dart';
 import 'providers/cart_provider.dart';
 import 'providers/products_provider.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

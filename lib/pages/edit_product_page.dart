@@ -37,14 +37,13 @@ class _EditProductPageState extends State<EditProductPage> {
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
-
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final productId = ModalRoute.of(context)!.settings.arguments as String;
+      final productId = ModalRoute.of(context)!.settings.arguments as String?;
 
       if (productId != null) {
         _editedProduct = Provider.of<ProductsProvider>(context, listen: false)
@@ -60,7 +59,6 @@ class _EditProductPageState extends State<EditProductPage> {
         _imageUrlController.text = _editedProduct.imageUrl;
       }
     }
-
     _isInit = false; // because we want to run this only once at the beginning
     super.didChangeDependencies();
   }
@@ -85,14 +83,14 @@ class _EditProductPageState extends State<EditProductPage> {
       return;
     }
     _form.currentState!.save();
-    if (_editedProduct.id != null) {
+
+    if (_editedProduct.id != '') {
       Provider.of<ProductsProvider>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
     } else {
       Provider.of<ProductsProvider>(context, listen: false)
           .addProduct(_editedProduct);
     }
-
     Navigator.of(context).pop();
   }
 
