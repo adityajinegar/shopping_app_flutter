@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -150,8 +151,24 @@ class ProductsProvider with ChangeNotifier {
     } else {}
   }
 
-  void deleteProduct(String id) {
-    _items.removeWhere((product) => product.id == id);
+  Future<void> deleteProduct(String id) async {
+    final url =
+        'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/products/$id.json';
+
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+
+    Product? existingProduct = _items[existingProductIndex];
+
+    _items.removeAt(existingProductIndex);
     notifyListeners();
+
+    final response = await http.delete(Uri.parse(url));
+
+    if (response.statusCode >= 400) {
+      _items.insert(existingProductIndex, existingProduct);
+      notifyListeners();
+      throw HttpException('Could not delete product.');
+    }
+    existingProduct = null;
   }
 }
