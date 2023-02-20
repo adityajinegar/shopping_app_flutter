@@ -35,22 +35,25 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: CartProvider()),
         ChangeNotifierProvider.value(value: Orders()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'My Shop',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.teal)
-              .copyWith(secondary: Colors.tealAccent),
-          fontFamily: 'Lato',
+      child: Consumer<AuthProvider>(
+        builder: (context, auth, child) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'My Shop',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.teal)
+                .copyWith(secondary: Colors.tealAccent),
+            fontFamily: 'Lato',
+          ),
+          home: auth.token != '' ? ProductsOverviewPage() : AuthPage(),
+          routes: {
+            ProductDetailsPage.routeName: (context) =>
+                const ProductDetailsPage(),
+            CartPage.routeName: (context) => const CartPage(),
+            OrdersPage.routeName: (context) => const OrdersPage(),
+            UserProductPage.routeName: (context) => const UserProductPage(),
+            EditProductPage.routeName: (context) => const EditProductPage(),
+          },
         ),
-        home: AuthPage(),
-        routes: {
-          ProductDetailsPage.routeName: (context) => const ProductDetailsPage(),
-          CartPage.routeName: (context) => const CartPage(),
-          OrdersPage.routeName: (context) => const OrdersPage(),
-          UserProductPage.routeName: (context) => const UserProductPage(),
-          EditProductPage.routeName: (context) => const EditProductPage(),
-        },
       ),
     );
   }
