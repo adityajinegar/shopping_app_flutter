@@ -5,10 +5,31 @@ import '../providers/orders.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/order_item.dart';
 
-class OrdersPage extends StatelessWidget {
+class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
 
   static const routeName = '/orders';
+
+  @override
+  State<OrdersPage> createState() => _OrdersPageState();
+}
+
+class _OrdersPageState extends State<OrdersPage> {
+  var _isLoading = false;
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) async {
+      setState(() {
+        _isLoading = true;
+      });
+      Provider.of<Orders>(context, listen: false).getOrders();
+      setState(() {
+        _isLoading = false;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +40,14 @@ class OrdersPage extends StatelessWidget {
         title: const Text('Your Orders'),
       ),
       drawer: const AppDrawer(),
-      body: ListView.builder(
-        itemBuilder: (context, index) => OrderItem(
-          order: orderData.orders[index],
-        ),
-        itemCount: orderData.orders.length,
-      ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemBuilder: (context, index) => OrderItem(
+                order: orderData.orders[index],
+              ),
+              itemCount: orderData.orders.length,
+            ),
     );
   }
 }

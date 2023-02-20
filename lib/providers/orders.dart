@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopping_app_flutter/widgets/order_item.dart';
 import 'cart_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -25,6 +26,39 @@ class Orders with ChangeNotifier {
   }
 
   final timestamp = DateTime.now().toIso8601String();
+
+  Future<void> getOrders() async {
+    const url =
+        'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/orders.json';
+    final response = await http.get(Uri.parse(url));
+    final List<OrderItemClass> loadedOrders = [];
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+
+    extractedData.forEach(
+      (orderId, orderData) {
+        loadedOrders.add(
+          OrderItemClass(
+            id: orderId,
+            amount: orderData['amount'],
+            dateTime: orderData['dateTime'],
+            products: (orderData['products'] as List<dynamic>)
+                .map(
+                  (item) => CartItem(
+                    cartId: item['id'],
+                    title: item['title'],
+                    quantity: item['quantity'],
+                    price: item['price'],
+                  ),
+                )
+                .toList(),
+          ),
+        );
+      },
+    );
+    _orders = loadedOrders.reversed.toList();
+    notifyListeners();
+  }
+
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     const url =
         'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/orders.json';
