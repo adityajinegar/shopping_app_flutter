@@ -1,7 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shopping_app_flutter/pages/auth_page.dart';
+import 'package:shopping_app_flutter/providers/auth_provider.dart';
+import 'pages/auth_page.dart';
 import 'pages/cart_page.dart';
 import 'pages/edit_product_page.dart';
 import 'pages/orders_page.dart';
@@ -26,12 +27,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
+        ChangeNotifierProvider.value(value: AuthProvider()),
+        ChangeNotifierProvider.value(
           //If using the provider for the first time, use the create syntax, if reusing it then use the .value syntax
-          create: (context) => ProductsProvider(),
+          value: ProductsProvider(),
         ),
-        ChangeNotifierProvider(create: (context) => CartProvider()),
-        ChangeNotifierProvider(create: (context) => Orders()),
+        ChangeNotifierProvider.value(value: CartProvider()),
+        ChangeNotifierProvider.value(value: Orders()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
