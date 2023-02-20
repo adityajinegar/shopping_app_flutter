@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopping_app_flutter/pages/auth_page.dart';
 import 'pages/cart_page.dart';
 import 'pages/edit_product_page.dart';
 import 'pages/orders_page.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
               .copyWith(secondary: Colors.tealAccent),
           fontFamily: 'Lato',
         ),
-        home: const ProductsOverviewPage(),
+        home: AuthPage(),
         routes: {
           ProductDetailsPage.routeName: (context) => const ProductDetailsPage(),
           CartPage.routeName: (context) => const CartPage(),
