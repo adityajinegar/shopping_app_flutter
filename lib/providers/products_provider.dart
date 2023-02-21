@@ -76,9 +76,12 @@ class ProductsProvider with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> getProducts() async {
+// [] means optional argument but you'll have to provide the default value
+  Future<void> getProducts([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     final url =
-        'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/products.json?auth=$authToken';
+        'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString';
     final favUrl =
         'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/userFavorites/$userId.json?auth=$authToken';
     try {
@@ -120,6 +123,7 @@ class ProductsProvider with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
+          'creatorId': userId,
         }),
       );
       final newProduct = Product(
