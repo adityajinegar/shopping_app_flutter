@@ -47,8 +47,9 @@ class ProductsProvider with ChangeNotifier {
   // var _showFavoritesOnly = false;
 
   final String authToken;
+  final String userId;
 
-  ProductsProvider(this.authToken, this._items);
+  ProductsProvider(this.authToken, this._items, this.userId);
 
   List<Product> get items {
     // if (_showFavoritesOnly) {
@@ -78,12 +79,16 @@ class ProductsProvider with ChangeNotifier {
   Future<void> getProducts() async {
     final url =
         'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/products.json?auth=$authToken';
+    final favUrl =
+        'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/userFavorites/$userId.json?auth=$authToken';
     try {
       final response = await http.get(Uri.parse(url));
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       // if (extractedData == null) {
       //   return;
       // }
+      final favResponse = await http.get(Uri.parse(favUrl));
+      final favData = json.decode(favResponse.body);
       final List<Product> loadedProducts = [];
       extractedData.forEach(
         (prodId, prodData) {
@@ -92,7 +97,7 @@ class ProductsProvider with ChangeNotifier {
             title: prodData['title'],
             description: prodData['description'],
             price: prodData['price'],
-            isFavorite: prodData['isFavorite'],
+            isFavorite: favData == null ? false : favData[prodId] ?? false,
             imageUrl: prodData['imageUrl'],
           ));
         },
@@ -115,7 +120,6 @@ class ProductsProvider with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavorite': product.isFavorite,
         }),
       );
       final newProduct = Product(
