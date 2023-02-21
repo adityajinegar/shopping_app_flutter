@@ -1,14 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:shopping_app_flutter/widgets/order_item.dart';
-import 'cart_provider.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import 'cart_provider.dart';
 
 class OrderItemClass {
   final String id;
   final double amount;
   final List<CartItem> products;
-  final String dateTime;
+  final DateTime dateTime;
 
   OrderItemClass({
     required this.id,
@@ -18,8 +19,11 @@ class OrderItemClass {
   });
 }
 
-class Orders with ChangeNotifier {
+class OrdersProvider with ChangeNotifier {
   List<OrderItemClass> _orders = [];
+  final String authToken;
+
+  OrdersProvider(this.authToken, this._orders);
 
   List<OrderItemClass> get orders {
     return [..._orders];
@@ -28,8 +32,8 @@ class Orders with ChangeNotifier {
   final timestamp = DateTime.now().toIso8601String();
 
   Future<void> getOrders() async {
-    const url =
-        'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/orders.json';
+    final url =
+        'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/orders.json?auth=$authToken';
     final response = await http.get(Uri.parse(url));
     final List<OrderItemClass> loadedOrders = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -40,7 +44,7 @@ class Orders with ChangeNotifier {
           OrderItemClass(
             id: orderId,
             amount: orderData['amount'],
-            dateTime: orderData['dateTime'],
+            dateTime: DateTime.parse(orderData['dateTime']),
             products: (orderData['products'] as List<dynamic>)
                 .map(
                   (item) => CartItem(
@@ -60,13 +64,13 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    const url =
-        'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/orders.json';
+    final url =
+        'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/orders.json?auth=$authToken';
     final response = await http.post(
       Uri.parse(url),
       body: json.encode({
         'amount': total,
-        'dateTime': timestamp,
+        'dateTime': DateTime.parse(timestamp),
         'products': cartProducts
             .map((cartProducts) => {
                   'id': cartProducts.cartId,
@@ -83,7 +87,7 @@ class Orders with ChangeNotifier {
         id: json.decode(response.body)['name'],
         amount: total,
         products: cartProducts,
-        dateTime: timestamp,
+        dateTime: DateTime.parse(timestamp),
       ),
     );
     notifyListeners();

@@ -7,7 +7,7 @@ import 'pages/cart_page.dart';
 import 'pages/edit_product_page.dart';
 import 'pages/orders_page.dart';
 import 'pages/user_product_page.dart';
-import 'providers/orders.dart';
+import 'providers/orders_provider.dart';
 
 import 'pages/product_detail_page.dart';
 import 'pages/products_overview_page.dart';
@@ -29,19 +29,27 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: AuthProvider()),
         // proxy provider depends on the previous provider. So, in this case whenever the AuthProvider will change, proxy provider will change too.
+
         ChangeNotifierProxyProvider<AuthProvider, ProductsProvider>(
           //If using the provider for the first time, use the create syntax, if reusing it then use the .value syntax
           update: (context, auth, previousProducts) => ProductsProvider(
             auth.token,
             previousProducts == null ? [] : previousProducts.items,
           ),
-          create: (context) {
-            return ProductsProvider(
-                Provider.of<AuthProvider>(context, listen: false).token, []);
-          },
+          create: (context) => ProductsProvider(
+              Provider.of<AuthProvider>(context, listen: false).token, []),
         ),
+
+        ChangeNotifierProxyProvider<AuthProvider, OrdersProvider>(
+          update: (context, auth, previousOrders) => OrdersProvider(
+            auth.token,
+            previousOrders == null ? [] : previousOrders.orders,
+          ),
+          create: (context) => OrdersProvider(
+              Provider.of<AuthProvider>(context, listen: false).token, []),
+        ),
+
         ChangeNotifierProvider.value(value: CartProvider()),
-        ChangeNotifierProvider.value(value: Orders()),
       ],
       child: Consumer<AuthProvider>(
         builder: (context, auth, child) => MaterialApp(

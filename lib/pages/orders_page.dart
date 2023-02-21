@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/orders.dart';
+import '../providers/orders_provider.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/order_item.dart';
 
@@ -18,7 +18,7 @@ class _OrdersPageState extends State<OrdersPage> {
   late Future _ordersFuture;
 
   Future _obtainOrdersFuture() {
-    return Provider.of<Orders>(context, listen: false).getOrders();
+    return Provider.of<OrdersProvider>(context, listen: false).getOrders();
   }
 
   @override
@@ -43,7 +43,7 @@ class _OrdersPageState extends State<OrdersPage> {
             if (dataSnapshot.error != null) {
               return Center(child: Text('An error occurred!'));
             } else {
-              return Consumer<Orders>(
+              return Consumer<OrdersProvider>(
                 builder: (context, orderData, child) => ListView.builder(
                   itemBuilder: (context, index) => OrderItem(
                     order: orderData.orders[index],
