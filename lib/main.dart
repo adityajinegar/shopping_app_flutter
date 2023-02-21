@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopping_app_flutter/pages/splash_page.dart';
 import 'package:shopping_app_flutter/providers/auth_provider.dart';
 import 'pages/auth_page.dart';
 import 'pages/cart_page.dart';
@@ -61,7 +62,16 @@ class MyApp extends StatelessWidget {
                 .copyWith(secondary: Colors.tealAccent),
             fontFamily: 'Lato',
           ),
-          home: auth.token != '' ? ProductsOverviewPage() : AuthPage(),
+          home: auth.token != ''
+              ? ProductsOverviewPage()
+              : FutureBuilder(
+                  future: auth.tryAutoLogIn(),
+                  builder: (context, authResultSnapshot) =>
+                      authResultSnapshot.connectionState ==
+                              ConnectionState.waiting
+                          ? SplashPage()
+                          : AuthPage(),
+                ),
           routes: {
             ProductDetailsPage.routeName: (context) =>
                 const ProductDetailsPage(),
