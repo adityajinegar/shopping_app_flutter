@@ -44,7 +44,11 @@ class ProductsProvider with ChangeNotifier {
     //   ),
   ];
 
-  var _showFavoritesOnly = false;
+  // var _showFavoritesOnly = false;
+
+  final String authToken;
+
+  ProductsProvider(this.authToken, this._items);
 
   List<Product> get items {
     // if (_showFavoritesOnly) {
@@ -61,19 +65,19 @@ class ProductsProvider with ChangeNotifier {
     return _items.firstWhere((product) => product.id == id);
   }
 
-  void showFavoritesOnly() {
-    _showFavoritesOnly = true;
-    notifyListeners();
-  }
+  // void showFavoritesOnly() {
+  //   _showFavoritesOnly = true;
+  //   notifyListeners();
+  // }
 
-  void showAll() {
-    _showFavoritesOnly = false;
-    notifyListeners();
-  }
+  // void showAll() {
+  //   _showFavoritesOnly = false;
+  //   notifyListeners();
+  // }
 
   Future<void> getProducts() async {
-    const url =
-        'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/products.json';
+    final url =
+        'https://shopping-app-flutter-33531-default-rtdb.firebaseio.com/products.json?auth=$authToken';
     try {
       final response = await http.get(Uri.parse(url));
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
